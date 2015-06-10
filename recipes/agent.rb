@@ -20,23 +20,23 @@
 #
 include_recipe 'pulp::client'
 
-%w{pulp-agent pulp-rpm-yumplugins pulp-rpm-handlers}.each do |pkg|
-    package pkg do
-        action :install
-    end
+%w(pulp-agent pulp-rpm-yumplugins pulp-rpm-handlers).each do |pkg|
+  package pkg do
+    action :install
+  end
 end
 
 directory '/etc/pulp/agent/' do
-    recursive true
+  recursive true
 end
 
 template '/etc/pulp/agent/agent.conf' do
-    source 'agent.conf.erb'
-    variables(
-        :config => node['pulp']['agent']
-    )
+  source 'agent.conf.erb'
+  variables(
+    :config => node['pulp']['agent']
+  )
 end
 
 service 'pulp-agent' do
-    action [ :enable, :start ]
+  action [:enable, :start]
 end

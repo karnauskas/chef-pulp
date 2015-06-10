@@ -18,19 +18,19 @@
 #
 # Will consume Pulp repositories?!
 #
-%w{pulp-consumer-client pulp-rpm-consumer-extensions}.each do |pkg|
-    package pkg do
-        action :install
-    end
+%w(pulp-consumer-client pulp-rpm-consumer-extensions).each do |pkg|
+  package pkg do
+    action :install
+  end
 end
 
 directory '/etc/pulp/consumer/conf.d' do
-    recursive true
+  recursive true
 end
 
 template '/etc/pulp/consumer/consumer.conf' do
-    source 'consumer.conf.erb'
-    variables(
-        :config => node['pulp']['client']
-    )
+  source 'consumer.conf.erb'
+  variables(
+    :config => node['pulp']['client']
+  )
 end

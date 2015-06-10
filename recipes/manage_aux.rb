@@ -21,9 +21,9 @@ include_recipe 'pulp::server'
 
 # Start default services (MongoDB and Apache) if not managed yet.
 service 'httpd' do
-    action :start
+  action :start
 end
 
 service 'mongod' do
-    action :start
+  action :start
 end

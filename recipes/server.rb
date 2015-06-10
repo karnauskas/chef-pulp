@@ -18,58 +18,58 @@
 #
 # Pulp service which will provide repositories, etc.
 #
-%w{pulp-server pulp-rpm-plugins}.each do |pkg|
-    package pkg do
-        action [ :install ]
-    end
+%w(pulp-server pulp-rpm-plugins).each do |pkg|
+  package pkg do
+    action [:install]
+  end
 end
 
 directory '/etc/pulp/logging' do
-    recursive true
-    not_if { ::File.directory?('/etc/pulp/logging') }
+  recursive true
+  not_if { ::File.directory?('/etc/pulp/logging') }
 end
 
 directory '/etc/pulp/server/plugins.conf.d' do
-    recursive true
-    not_if { ::File.directory?('/etc/pulp/server/plugins.conf.d') }
+  recursive true
+  not_if { ::File.directory?('/etc/pulp/server/plugins.conf.d') }
 end
 
 template '/etc/pulp/server.conf' do
-    source 'server.conf.erb'
-    owner 'root'
-    group 'root'
-    mode '0644'
+  source 'server.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
 end
 
 directory '/etc/httpd/conf.d' do
-    recursive true
-    not_if { ::File.directory?('/etc/httpd/conf.d') }
+  recursive true
+  not_if { ::File.directory?('/etc/httpd/conf.d') }
 end
 
 directory '/var/www/pub/http/repos' do
-    owner 'apache'
-    group 'apache'
-    mode '0755'
-    recursive true
+  owner 'apache'
+  group 'apache'
+  mode '0755'
+  recursive true
 end
 
 directory '/var/www/pub/https/repos' do
-    owner 'apache'
-    group 'apache'
-    mode '0755'
-    recursive true
+  owner 'apache'
+  group 'apache'
+  mode '0755'
+  recursive true
 end
 
 template '/etc/httpd/conf.d/pulp.conf' do
-    source 'pulp.conf.erb'
-    owner 'root'
-    group 'root'
-    mode '0644'
-    notifies :restart, 'service[httpd]'
+  source 'pulp.conf.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+  notifies :restart, 'service[httpd]'
 end
 
 execute 'setup-db' do
-    command "pulp-manage-db && touch '/var/lib/pulp/.dbinit'"
-    not_if { ::File.exists?('/var/lib/pulp/.dbinit') }
-    notifies :restart, 'service[httpd]'
+  command "pulp-manage-db && touch '/var/lib/pulp/.dbinit'"
+  not_if { ::File.exists?('/var/lib/pulp/.dbinit') }
+  notifies :restart, 'service[httpd]'
 end

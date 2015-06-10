@@ -18,22 +18,22 @@
 #
 # Pulp admin console tools
 #
-%w{pulp-admin-client pulp-rpm-admin-extensions}.each do |pkg|
-    package pkg do
-        action :install
-    end
+%w(pulp-admin-client pulp-rpm-admin-extensions).each do |pkg|
+  package pkg do
+    action :install
+  end
 end
 
 directory '/etc/pulp/admin/conf.d' do
-    owner 'root'
-    group 'root'
-    mode '0755'
-    recursive true
+  owner 'root'
+  group 'root'
+  mode '0755'
+  recursive true
 end
 
 template '/etc/pulp/admin/admin.conf' do
-    source 'admin.conf.erb'
-    variables(
-        :config => node['pulp']['admin']
-    )
+  source 'admin.conf.erb'
+  variables(
+    :config => node['pulp']['admin']
+  )
 end

@@ -19,26 +19,29 @@
 
 # Version 2.x Production Releases
 yum_repository 'pulp-v2-stable' do
-    description 'Pulp v2 Production Releases'
-    baseurl 'http://repos.fedorapeople.org/repos/pulp/pulp/stable/2/$releasever/$basearch/'
-    skip_if_unavailable true
-    gpgcheck false
+  description 'Pulp v2 Production Releases'
+  baseurl 'http://repos.fedorapeople.org/repos/pulp/pulp/stable/2/$releasever/$basearch/'
+  skip_if_unavailable true
+  gpgcheck true
+  gpgkey 'https://repos.fedorapeople.org/repos/pulp/pulp/GPG-RPM-KEY-pulp-2'
 end
 
 # Version 2.x Beta Builds
 yum_repository 'pulp-v2-beta' do
-    description 'Pulp v2 Beta Builds'
-    baseurl 'http://repos.fedorapeople.org/repos/pulp/pulp/beta/2.2/$releasever/$basearch/'
-    skip_if_unavailable true
-    gpgcheck false
-    enabled node['pulp']['repo']['beta']
+  description 'Pulp v2 Beta Builds'
+  baseurl 'http://repos.fedorapeople.org/repos/pulp/pulp/beta/2.2/$releasever/$basearch/'
+  skip_if_unavailable true
+  gpgcheck true
+  gpgkey 'https://repos.fedorapeople.org/repos/pulp/pulp/GPG-RPM-KEY-pulp-2'
+  enabled node['pulp']['repo']['beta']
 end
 
 # Weekly Testing Builds
 yum_repository 'pulp-v2-testing' do
-    description 'Pulp v2 Testing Builds'
-    baseurl 'http://repos.fedorapeople.org/repos/pulp/pulp/testing/$releasever/$basearch/'
-    skip_if_unavailable true
-    gpgcheck false
-    enabled node['pulp']['repo']['testing']
+  description 'Pulp v2 Testing Builds'
+  baseurl 'http://repos.fedorapeople.org/repos/pulp/pulp/testing/$releasever/$basearch/'
+  skip_if_unavailable true
+  gpgcheck true
+  gpgkey 'https://repos.fedorapeople.org/repos/pulp/pulp/GPG-RPM-KEY-pulp-2'
+  enabled node['pulp']['repo']['testing']
 end
