@@ -12,3 +12,4 @@ Support
 Links
 -----
 - http://www.pulpproject.org/
+- http://pulp-user-guide.readthedocs.org/en/2.4-release/index.html

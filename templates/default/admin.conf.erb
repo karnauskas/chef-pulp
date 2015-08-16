@@ -1,9 +1,26 @@
-# Managed by Chef, generated for <%= node['fqdn'] %>
+[server]
+host: <%= @conf['server']['host'] %>
+port: <%= @conf['server']['port'] %>
+api_prefix: <%= @conf['server']['api_prefix'] %>
+verify_ssl: <%= @conf['server']['verify_ssl'].to_s %>
+ca_path: <%= @conf['server']['ca_path'] %>
+upload_chunk_size: <%= @conf['server']['upload_chunk_size'] %>
 
-<% @config.each_pair do |block, block_data| -%>
-[<%= block -%>]
-<% block_data.each_pair do |key, value| -%>
-<%= key -%> = <%= value %>
-<% end %>
+[client]
+role: <%= @conf['client']['role'] %>
 
-<% end -%>
+[filesystem]
+extensions_dir: <%= @conf['filesystem']['extensions_dir'] %>
+id_cert_dir: <%= @conf['filesystem']['id_cert_dir'] %>
+id_cert_filename: <%= @conf['filesystem']['id_cert_filename'] %>
+upload_working_dir: <%= @conf['filesystem']['upload_working_dir'] %>
+
+[logging]
+filename: <%= @conf['logging']['filename'] %>
+call_log_filename: <%= @conf['logging']['call_log_filename'] %>
+
+[output]
+poll_frequency_in_seconds: <%= @conf['output']['poll_frequency_in_seconds'] %>
+enable_color: <%= @conf['output']['enable_color'].to_s %>
+wrap_to_terminal: <%= @conf['output']['wrap_to_terminal'].to_s %>
+wrap_width: <%= @conf['output']['wrap_width'] %>

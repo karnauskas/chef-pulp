@@ -2,7 +2,7 @@
 # Cookbook Name:: pulp
 # Recipe:: admin
 #
-# Copyright 2014, Marius Karnauskas
+# Copyright 2014-2015, Marius Karnauskas
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,12 +28,9 @@ directory '/etc/pulp/admin/conf.d' do
   owner 'root'
   group 'root'
   mode '0755'
-  recursive true
 end
 
 template '/etc/pulp/admin/admin.conf' do
   source 'admin.conf.erb'
-  variables(
-    :config => node['pulp']['admin']
-  )
+  variables :conf => node['pulp']['admin']
 end

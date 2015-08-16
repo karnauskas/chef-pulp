@@ -2,36 +2,31 @@
 # Cookbook Name:: pulp
 # Recipe:: server
 #
-# Copyright 2014, Marius Karnauskas
+# Copyright 2014-2015, Marius Karnauskas
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the 'License');
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
+# distributed under the License is distributed on an 'AS IS' BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
 # Pulp service which will provide repositories, etc.
 #
-%w(pulp-server pulp-rpm-plugins).each do |pkg|
+
+%w(pulp-server pulp-rpm-plugins python-qpid-qmf python-gofer-qpid).each do |pkg|
   package pkg do
-    action [:install]
+    action :install
   end
 end
 
-directory '/etc/pulp/logging' do
-  recursive true
-  not_if { ::File.directory?('/etc/pulp/logging') }
-end
-
-directory '/etc/pulp/server/plugins.conf.d' do
-  recursive true
-  not_if { ::File.directory?('/etc/pulp/server/plugins.conf.d') }
+%w(logging server/plugins.conf.d).each do |d|
+  directory "/etc/pulp/#{d}"
 end
 
 template '/etc/pulp/server.conf' do
@@ -39,37 +34,55 @@ template '/etc/pulp/server.conf' do
   owner 'root'
   group 'root'
   mode '0644'
+  variables :conf => node['pulp']['server']
 end
 
-directory '/etc/httpd/conf.d' do
-  recursive true
-  not_if { ::File.directory?('/etc/httpd/conf.d') }
+execute 'create-ca-certs' do
+  command '/usr/bin/pulp-gen-ca-certificate'
+  not_if 'test -f /etc/pki/pulp/ca.key'
 end
 
-directory '/var/www/pub/http/repos' do
-  owner 'apache'
+migration_lock = '/var/lib/pulp/.dbmanage.stamp'
+
+execute 'pulp-manage-db' do
+  command '/usr/bin/pulp-manage-db'
+  user 'apache'
   group 'apache'
-  mode '0755'
-  recursive true
+  not_if 'test -f #{migration_lock}'
 end
 
-directory '/var/www/pub/https/repos' do
-  owner 'apache'
-  group 'apache'
-  mode '0755'
-  recursive true
+file migration_lock do
+  action :create_if_missing
 end
 
-template '/etc/httpd/conf.d/pulp.conf' do
-  source 'pulp.conf.erb'
-  owner 'root'
-  group 'root'
-  mode '0644'
-  notifies :restart, 'service[httpd]'
+raise 'apache2::mod_python should not be used with apache2::mod_wsgi' if node.recipes.include?('apache2::mod_python')
+
+include_recipe 'apache2::mod_wsgi'
+include_recipe 'apache2::mod_ssl'
+
+apache_conf 'pulp'
+apache_conf 'pulp_rpm'
+
+template '/etc/default/pulp_resource_manager' do
+  source 'pulp_resource_manager.erb'
 end
 
-execute 'setup-db' do
-  command "pulp-manage-db && touch '/var/lib/pulp/.dbinit'"
-  not_if { ::File.exists?('/var/lib/pulp/.dbinit') }
-  notifies :restart, 'service[httpd]'
+service 'pulp_resource_manager' do
+  action [:enable, :start]
+end
+
+template '/etc/default/pulp_celerybeat' do
+  source 'pulp_celerybeat.erb'
+end
+
+service 'pulp_celerybeat' do
+  action [:enable, :start]
+end
+
+template '/etc/default/pulp_workers' do
+  source 'pulp_workers.erb'
+end
+
+service 'pulp_workers' do
+  action [:enable, :start]
 end

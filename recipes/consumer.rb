@@ -25,12 +25,9 @@
 end
 
 directory '/etc/pulp/consumer/conf.d' do
-  recursive true
 end
 
 template '/etc/pulp/consumer/consumer.conf' do
   source 'consumer.conf.erb'
-  variables(
-    :config => node['pulp']['client']
-  )
+  variables :config => node['pulp']['consumer']
 end

@@ -32,9 +32,8 @@ end
 
 template '/etc/pulp/agent/agent.conf' do
   source 'agent.conf.erb'
-  variables(
-    :config => node['pulp']['agent']
-  )
+  variables :config => node['pulp']['agent']
+
 end
 
 service 'pulp-agent' do
