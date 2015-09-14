@@ -4,17 +4,16 @@ driver:
   customize:
     memory: 1024
     cpus: 2
-  communicator: ssh
-  gui: false
 
 provisioner:
   name: chef_solo
+  require_chef_omnibus: 12.4.1
 
 platforms:
   #- name: centos-6.5
   - name: centos-6.6
   #- name: centos-7.1
-  #- name: fedora-21
+  #- name: fedora-22
 
 suites:
   - name: server

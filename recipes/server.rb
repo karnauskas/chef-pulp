@@ -18,13 +18,15 @@
 #
 # Pulp service which will provide repositories, etc.
 #
+# Stuff missing from documentation: https://fedorahosted.org/pulp/wiki/Certificates
+# 
 
 %w(
-  pulp-server
   pulp-rpm-plugins
   pulp-rpm-yumplugins 
-  python-qpid-qmf
+  pulp-server
   python-gofer-qpid
+  python-qpid-qmf
   ).each do |pkg|
   package pkg do
     action :install
@@ -59,11 +61,11 @@ if node.recipes.include?('apache2::mod_python')
   raise 'apache2::mod_python should not be used with apache2::mod_wsgi'
 end
 
-include_recipe 'apache2::mod_wsgi'
-include_recipe 'apache2::mod_ssl'
-
 apache_conf 'pulp'
 apache_conf 'pulp_rpm'
+
+include_recipe 'apache2::mod_ssl'
+include_recipe 'apache2::mod_wsgi'
 
 template '/etc/default/pulp_resource_manager' do
   source 'pulp_resource_manager.erb'

@@ -13,27 +13,30 @@
 # granted to use or replicate Red Hat trademarks that are incorporated
 # in this software or its documentation.
 
-AddType application/x-pkcs7-crl .crl
-AddType application/x-x509-ca-cert .crt
+# AddType application/x-pkcs7-crl .crl
+# AddType application/x-x509-ca-cert .crt
 
 # Example ssl cert and key files to get you started.
 # This MUST match /etc/pulp/server.conf [security] 'cacert'.
-SSLCACertificateFile <%= node['pulp']['server']['security']['cacert'] %>
 
-# allow older yum clients to connect, see bz 647828
-SSLInsecureRenegotiation on
+
+#SSLCACertificateFile <%= node['pulp']['server']['security']['cacert'] %>
+SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
 
 WSGIProcessGroup pulp
 WSGIApplicationGroup pulp
 WSGIDaemonProcess pulp user=apache group=apache processes=3 display-name=%{GROUP}
 
 # DEBUG - uncomment the next 2 lines to enable debugging
-#WSGIRestrictStdin Off
-#WSGIRestrictStdout Off
+WSGIRestrictStdin Off
+WSGIRestrictStdout Off
 
 WSGISocketPrefix run/wsgi
 WSGIScriptAlias /pulp/api /srv/pulp/webservices.wsgi
 WSGIImportScript /srv/pulp/webservices.wsgi process-group=pulp application-group=pulp
+
+<VirtualHost *:443>
 
 <Files webservices.wsgi>
     WSGIPassAuthorization On
@@ -46,9 +49,6 @@ WSGIImportScript /srv/pulp/webservices.wsgi process-group=pulp application-group
     SSLVerifyClient optional
 </Files>
 
-<VirtualHost *:80>
-    Include /etc/pulp/vhosts80/*.conf
-</VirtualHost>
 
 
 Alias /pulp/static /var/lib/pulp/static
@@ -80,3 +80,10 @@ Alias /pulp/static /var/lib/pulp/static
 #    AuthUserFile /var/lib/pulp/.htaccess
 #    Require valid-user
 #</Location>
+
+
+</VirtualHost>
+
+<VirtualHost *:80>
+    Include /etc/pulp/vhosts80/*.conf
+</VirtualHost>
