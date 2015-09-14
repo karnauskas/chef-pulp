@@ -17,7 +17,7 @@ platforms:
   #- name: fedora-21
 
 suites:
-  - name: default
+  - name: server
     run_list:
       - recipe[yum]
       - recipe[yum-epel]
@@ -27,7 +27,6 @@ suites:
 
       - recipe[pulp::repository]
       - recipe[pulp::server]
-      - recipe[pulp::admin]
     attributes:
       pulp:
         admin:
@@ -42,7 +41,22 @@ suites:
       - recipe[yum-epel]
 
       - recipe[pulp::repository]
-      - recipe[pulp::client]
+      - recipe[pulp::agent]
     driver_config:
       network:
       - ["private_network", {ip: "192.168.33.50"}]
+  - name: admin
+    run_list:
+      - recipe[yum]
+      - recipe[yum-epel]
+
+      - recipe[pulp::repository]
+      - recipe[pulp::admin]
+    attributes:
+      pulp:
+        admin:
+          server:
+            host: 192.168.33.10
+    driver_config:
+      network:
+      - ["private_network", {ip: "192.168.33.60"}]

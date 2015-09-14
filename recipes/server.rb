@@ -19,7 +19,13 @@
 # Pulp service which will provide repositories, etc.
 #
 
-%w(pulp-server pulp-rpm-plugins python-qpid-qmf python-gofer-qpid).each do |pkg|
+%w(
+  pulp-server
+  pulp-rpm-plugins
+  pulp-rpm-yumplugins 
+  python-qpid-qmf
+  python-gofer-qpid
+  ).each do |pkg|
   package pkg do
     action :install
   end
@@ -42,20 +48,16 @@ execute 'create-ca-certs' do
   not_if 'test -f /etc/pki/pulp/ca.key'
 end
 
-migration_lock = '/var/lib/pulp/.dbmanage.stamp'
-
 execute 'pulp-manage-db' do
   command '/usr/bin/pulp-manage-db'
   user 'apache'
   group 'apache'
-  not_if 'test -f #{migration_lock}'
+  creates '/var/lib/pulp/.dbmanage.stamp'
 end
 
-file migration_lock do
-  action :create_if_missing
+if node.recipes.include?('apache2::mod_python')
+  raise 'apache2::mod_python should not be used with apache2::mod_wsgi'
 end
-
-raise 'apache2::mod_python should not be used with apache2::mod_wsgi' if node.recipes.include?('apache2::mod_python')
 
 include_recipe 'apache2::mod_wsgi'
 include_recipe 'apache2::mod_ssl'

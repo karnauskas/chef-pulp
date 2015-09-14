@@ -2,7 +2,7 @@
 # Cookbook Name:: pulp
 # Recipe:: agent
 #
-# Copyright 2014, Marius Karnauskas
+# Copyright 2014-2015, Marius Karnauskas
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 #
 # Pulp agent which will run as service and will accept commands.
 #
-include_recipe 'pulp::client'
 
 %w(pulp-agent pulp-rpm-yumplugins pulp-rpm-handlers).each do |pkg|
   package pkg do
@@ -36,6 +35,6 @@ template '/etc/pulp/agent/agent.conf' do
 
 end
 
-service 'pulp-agent' do
-  action [:enable, :start]
-end
+# service 'pulp-agent' do
+#   action [:enable, :start]
+# end
