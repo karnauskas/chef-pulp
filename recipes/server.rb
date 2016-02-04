@@ -63,7 +63,6 @@ if node['recipes'].include?('apache2::mod_python')
 end
 
 apache_conf 'pulp'
-#apache_conf 'pulp_rpm'
 
 include_recipe 'apache2::mod_ssl'
 include_recipe 'apache2::mod_wsgi'
