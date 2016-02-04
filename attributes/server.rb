@@ -15,7 +15,7 @@ default['pulp']['server'] = {
     'operation_retries' => 2,
     'replica_set' => nil
   },
-  
+
   'security' => {
     'cacert' => '/etc/pki/pulp/ca.crt',
     'cakey' => '/etc/pki/pulp/ca.key',

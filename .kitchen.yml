@@ -2,30 +2,30 @@
 driver:
   name: vagrant
   customize:
-    memory: 1024
+    memory: 2048
     cpus: 2
 
 provisioner:
   name: chef_solo
-  require_chef_omnibus: 12.4.1
+  require_chef_omnibus: 12.6.0
 
 platforms:
-  #- name: centos-6.5
-  - name: centos-6.6
-  #- name: centos-7.1
-  #- name: fedora-22
+#  - name: centos-6.7
+  - name: centos-7.2
 
 suites:
   - name: server
     run_list:
       - recipe[yum]
       - recipe[yum-epel]
+      - recipe[iptables::disabled]
       - recipe[apache2]
       - recipe[qpid::server]
       - recipe[mongodb::default]
 
       - recipe[pulp::repository]
       - recipe[pulp::server]
+      - recipe[pulp::admin]
     attributes:
       pulp:
         admin:
@@ -34,6 +34,7 @@ suites:
     driver_config:
       network:
       - ["private_network", {ip: "192.168.33.10"}]
+
   - name: client
     run_list:
       - recipe[yum]
@@ -44,6 +45,7 @@ suites:
     driver_config:
       network:
       - ["private_network", {ip: "192.168.33.50"}]
+
   - name: admin
     run_list:
       - recipe[yum]
@@ -56,6 +58,7 @@ suites:
         admin:
           server:
             host: 192.168.33.10
+            verify_ssl: false
     driver_config:
       network:
       - ["private_network", {ip: "192.168.33.60"}]

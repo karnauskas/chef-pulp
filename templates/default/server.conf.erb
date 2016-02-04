@@ -14,7 +14,7 @@ key_url: <%= @conf['key_url'] %>
 ks_url: <%= @conf['ks_url'] %>
 default_login: <%= @conf['default_login'] %>
 default_password: <%= @conf['default_password'] %>
-debugging_mode: <%= @conf['debugging_mode'].to_s %>
+debugging_mode: <%= @conf['debugging_mode'].to_s.capitalize %>
 
 [security]
 cacert: <%= @conf['security']['cacert'] %>
@@ -40,7 +40,7 @@ repo_group_publish_history: <%=  @conf['data_reaping']['repo_group_publish_histo
 
 <%- if @conf['ldap']['enabled'] -%>
 [ldap]
-enabled: <%= @conf['ldap']['enabled'].to_s %>
+enabled: <%= @conf['ldap']['enabled'].to_s.capitalize %>
 uri: <%= @conf['ldap']['uri'] %>
 base: <%= @conf['ldap']['base'] %>
 tls: <%= @conf['ldap']['tls'] ? "yes" : "no" %>
@@ -49,7 +49,7 @@ filter: <%= @conf['ldap']['filter'] %>
 <% end %>
 
 [oauth]
-enabled: <%= @conf['oauth']['enabled'].to_s %>
+enabled: <%= @conf['oauth']['enabled'].to_s.capitalize %>
 oauth_key: <%= @conf['oauth']['oauth_key'] %>
 oauth_secret: <%= @conf['oauth']['oauth_secret'] %>
 
@@ -81,7 +81,7 @@ publish_weight: <%= @conf['tasks']['publish_weight'] %>
 sync_weight: <%= @conf['tasks']['sync_weight'] %>
 
 [email]
-enabled: <%= @conf['email']['enabled'].to_s %>
+enabled: <%= @conf['email']['enabled'].to_s.capitalize %>
 host: <%= @conf['email']['host'] %>
 port: <%= @conf['email']['port'] %>
 from: <%= @conf['email']['from'] %>

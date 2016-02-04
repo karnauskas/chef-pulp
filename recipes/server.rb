@@ -19,14 +19,15 @@
 # Pulp service which will provide repositories, etc.
 #
 # Stuff missing from documentation: https://fedorahosted.org/pulp/wiki/Certificates
-# 
+#
 
 %w(
   pulp-rpm-plugins
-  pulp-rpm-yumplugins 
+  pulp-rpm-yumplugins
   pulp-server
   python-gofer-qpid
   python-qpid-qmf
+  qpid-tools
   ).each do |pkg|
   package pkg do
     action :install
@@ -57,12 +58,12 @@ execute 'pulp-manage-db' do
   creates '/var/lib/pulp/.dbmanage.stamp'
 end
 
-if node.recipes.include?('apache2::mod_python')
+if node['recipes'].include?('apache2::mod_python')
   raise 'apache2::mod_python should not be used with apache2::mod_wsgi'
 end
 
 apache_conf 'pulp'
-apache_conf 'pulp_rpm'
+#apache_conf 'pulp_rpm'
 
 include_recipe 'apache2::mod_ssl'
 include_recipe 'apache2::mod_wsgi'

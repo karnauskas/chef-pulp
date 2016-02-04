@@ -3,6 +3,7 @@ default['pulp']['admin'] = {
   'server' => {
     'host' => "localhost",
     'port' => 443,
+    'rsa_pub' => nil,
     'api_prefix' => '/pulp/api',
     'upload_chunk_size' => 104_857_6,
     'ca_path' => '/etc/pki/tls/certs/ca-bundle.crt',

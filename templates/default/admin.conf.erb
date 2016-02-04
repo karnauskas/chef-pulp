@@ -2,7 +2,7 @@
 host: <%= @conf['server']['host'] %>
 port: <%= @conf['server']['port'] %>
 api_prefix: <%= @conf['server']['api_prefix'] %>
-verify_ssl: <%= @conf['server']['verify_ssl'].to_s %>
+verify_ssl: <%= @conf['server']['verify_ssl'].to_s.capitalize %>
 ca_path: <%= @conf['server']['ca_path'] %>
 upload_chunk_size: <%= @conf['server']['upload_chunk_size'] %>
 

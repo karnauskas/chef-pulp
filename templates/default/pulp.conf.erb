@@ -1,4 +1,4 @@
-# Apache configuration file for pulp web services and repositories (compatible with <= apache2.2)
+# Apache configuration file for pulp web services and repositories (compatible with >= apache2.4)
 #
 # Copyright © 2010 Red Hat, Inc.
 #
@@ -13,30 +13,36 @@
 # granted to use or replicate Red Hat trademarks that are incorporated
 # in this software or its documentation.
 
-# AddType application/x-pkcs7-crl .crl
-# AddType application/x-x509-ca-cert .crt
+AddType application/x-pkcs7-crl .crl
+AddType application/x-x509-ca-cert .crt
 
+<VirtualHost *:443>
+  SSLEngine on
 # Example ssl cert and key files to get you started.
 # This MUST match /etc/pulp/server.conf [security] 'cacert'.
+SSLCACertificateFile <%= node['pulp']['server']['security']['cacert'] %>
+SSLCertificateKeyFile <%= node['pulp']['server']['security']['cakey'] %>
+WSGIScriptAlias /pulp/api /srv/pulp/webservices.wsgi
+</VirtualHost>
 
-
-#SSLCACertificateFile <%= node['pulp']['server']['security']['cacert'] %>
-SSLCertificateFile /etc/pki/tls/certs/localhost.crt
-SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+# allow older yum clients to connect, see bz 647828
+SSLInsecureRenegotiation on
 
 WSGIProcessGroup pulp
 WSGIApplicationGroup pulp
 WSGIDaemonProcess pulp user=apache group=apache processes=3 display-name=%{GROUP}
 
 # DEBUG - uncomment the next 2 lines to enable debugging
-WSGIRestrictStdin Off
-WSGIRestrictStdout Off
+#WSGIRestrictStdin Off
+#WSGIRestrictStdout Off
 
 WSGISocketPrefix run/wsgi
 WSGIScriptAlias /pulp/api /srv/pulp/webservices.wsgi
 WSGIImportScript /srv/pulp/webservices.wsgi process-group=pulp application-group=pulp
 
-<VirtualHost *:443>
+<Directory /srv/pulp>
+    Require all granted
+</Directory>
 
 <Files webservices.wsgi>
     WSGIPassAuthorization On
@@ -50,22 +56,28 @@ WSGIImportScript /srv/pulp/webservices.wsgi process-group=pulp application-group
 </Files>
 
 
+<VirtualHost *:80>
+    Include /etc/pulp/vhosts80/*.conf
+</VirtualHost>
+
 
 Alias /pulp/static /var/lib/pulp/static
 
 <Location /pulp/static>
     SSLRequireSSL
     Options +Indexes
-    Order allow,deny
-    Allow from all
+    Require all granted
 </Location>
+
 
 
 # Authentication
 #
 # If you want to authenticate against an external source, the best approach is
-# to use an apache authentication plugin. Only use your auth mechanism for the
-# login call, and then use pulp's certificate-based auth for successive calls.
+# to use an apache authentication plugin. Most deployments will only use a
+# third-party authentication source for the login call, and then use pulp's
+# certificate-based auth for successive calls. It is, however, possible to use
+# an apache authentication plugin for the entire REST API.
 #
 # You are responsible for ensuring that a user gets created in pulp prior to
 # any login attempt. Pulp does not support auto-creation of users that exist in
@@ -80,10 +92,3 @@ Alias /pulp/static /var/lib/pulp/static
 #    AuthUserFile /var/lib/pulp/.htaccess
 #    Require valid-user
 #</Location>
-
-
-</VirtualHost>
-
-<VirtualHost *:80>
-    Include /etc/pulp/vhosts80/*.conf
-</VirtualHost>
